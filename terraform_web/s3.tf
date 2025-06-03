@@ -87,6 +87,17 @@ resource "aws_s3_object" "subir_html" {
     acl             = "public-read"
 }
 
+resource "aws_s3_object" "subir_js" {
+    depends_on = [aws_s3_bucket_acl.s3_bucket_acl]
+    for_each        = fileset("./web/", "*.js")
+    bucket          = aws_s3_bucket.servidor.bucket
+    key             = each.value
+    source          = "./web/${each.value}"
+    content_type    = "text/js"
+    etag            = filemd5("./web/${each.value}")
+    acl             = "public-read"
+}
+
 resource "aws_s3_object" "subir_css" {
     depends_on = [aws_s3_bucket_acl.s3_bucket_acl]
     for_each        = fileset("./web/", "*.css")
